@@ -4,7 +4,7 @@
 ![rank](https://make.fun/badge/gta6-01/cervus-snoopy/makefun-gta6-01/rank.svg)
 ![reward](https://make.fun/badge/gta6-01/cervus-snoopy/makefun-gta6-01/reward.svg)
 
-An original 2D top-down open-world crime game built for the [make.fun](https://make.fun) "Make GTA 6" competition. No Rockstar assets, names, or code — everything here is original: the city of Port Mercer, the story of Jules Rook and The Broker, the art, and the synthesized sound.
+An original 2D top-down open-world crime game built for make.fun's ["Make GTA 6" bounty](https://make.fun/bounty/gta6-01). No Rockstar assets, names, or code — everything here is original: the city of Port Mercer, the story of Jules Rook and The Broker, the art, and the synthesized sound.
 
 ## The game
 
