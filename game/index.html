@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PORT MERCER — Leon Bay | Open-World Crime Game</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0b0e13; font-family: 'Segoe UI', Arial, sans-serif; }
+  #game { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
+  #hud { position: fixed; inset: 0; pointer-events: none; color: #fff; z-index: 5; }
+  .panel { background: rgba(8, 12, 20, 0.72); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 8px 12px; }
+  #vitals { position: absolute; top: 12px; left: 12px; width: 240px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; margin: 3px 0; font-size: 13px; font-weight: 700; }
+  .bar-label { width: 46px; letter-spacing: 1px; }
+  .bar { flex: 1; height: 12px; background: rgba(255,255,255,0.15); border-radius: 6px; overflow: hidden; }
+  .bar > div { height: 100%; transition: width 0.15s; }
+  #hp-bar { background: #2ecc71; }
+  #armor-bar { background: #3498db; }
+  .bar-num { width: 34px; text-align: right; }
+  #cash { font-size: 20px; font-weight: 800; color: #2ecc71; margin-top: 4px; }
+  #stars { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); font-size: 30px; letter-spacing: 6px; color: #f1c40f; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
+  #clock { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: 700; background: rgba(8,12,20,0.72); border: 1px solid rgba(255,255,255,0.18); border-radius: 6px; padding: 3px 10px; }
+  #minimap-wrap { position: absolute; top: 12px; right: 12px; }
+  #minimap { width: 180px; height: 180px; display: block; border-radius: 8px; }
+  #weapon-box { position: absolute; bottom: 12px; left: 12px; font-size: 15px; font-weight: 700; }
+  #weapon-box .big { font-size: 20px; }
+  #speed-box { position: absolute; bottom: 12px; right: 12px; font-size: 26px; font-weight: 800; text-align: right; }
+  #objective-box { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 460px; text-align: center; }
+  #mission-label { font-size: 12px; letter-spacing: 2px; color: #f1c40f; font-weight: 800; }
+  #objective { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  #objective-sub { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+  #prompt { position: absolute; top: 58%; left: 50%; transform: translateX(-50%); display: none; background: rgba(8,12,20,0.85); border: 1px solid #f1c40f; color: #f1c40f; font-weight: 700; font-size: 15px; padding: 6px 14px; border-radius: 6px; }
+  #toast { position: absolute; top: 110px; left: 50%; transform: translateX(-50%); display: none; background: rgba(241,196,15,0.92); color: #111; font-weight: 800; font-size: 17px; padding: 8px 18px; border-radius: 6px; }
+  .screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: linear-gradient(160deg, rgba(10,14,24,0.88), rgba(20,8,28,0.82)); color: #fff; z-index: 10; padding: 20px; }
+  .screen h1 { font-size: 64px; letter-spacing: 6px; color: #f1c40f; text-shadow: 0 4px 0 #7a5c00, 0 0 30px rgba(241,196,15,0.5); }
+  .screen h2 { font-size: 20px; letter-spacing: 4px; color: #2ecc71; margin-top: 4px; }
+  .screen p { max-width: 560px; font-size: 16px; line-height: 1.5; margin: 18px 0; opacity: 0.92; }
+  .controls { font-size: 14px; line-height: 1.9; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px 22px; margin-bottom: 20px; }
+  .controls b { color: #f1c40f; }
+  button { pointer-events: auto; cursor: pointer; font-size: 18px; font-weight: 800; letter-spacing: 1px; color: #111; background: #f1c40f; border: none; border-radius: 8px; padding: 12px 34px; margin: 4px; }
+  button:hover { background: #ffe14d; }
+  button.ghost { background: transparent; color: #fff; border: 2px solid #fff; }
+  button.ghost:hover { background: rgba(255,255,255,0.15); }
+  #pause, #gameover { display: none; }
+  #gameover h1 { color: #e74c3c; text-shadow: 0 4px 0 #5a0f0f; }
+  .small { font-size: 13px; opacity: 0.7; margin-top: 14px; }
+  #btn-mute { position: absolute; top: 204px; right: 12px; pointer-events: auto; font-size: 12px; padding: 5px 10px; background: rgba(8,12,20,0.72); color: #fff; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div id="vitals" class="panel">
+    <div class="bar-row"><span class="bar-label">HEALTH</span><div class="bar"><div id="hp-bar" style="width:100%"></div></div><span class="bar-num" id="hp-num">100</span></div>
+    <div class="bar-row"><span class="bar-label">ARMOUR</span><div class="bar"><div id="armor-bar" style="width:50%"></div></div><span class="bar-num" id="armor-num">50</span></div>
+    <div id="cash">$250</div>
+  </div>
+  <div id="stars">☆☆☆☆☆</div>
+  <div id="clock">DAY 07:00</div>
+  <div id="minimap-wrap"><canvas id="minimap" width="180" height="180"></canvas></div>
+  <button id="btn-mute">M — MUTE</button>
+  <div id="weapon-box" class="panel"><span class="big" id="weapon">PISTOL</span> &nbsp; <span id="ammo">24 / 48</span></div>
+  <div id="speed-box" class="panel"><span id="speed">—</span></div>
+  <div id="objective-box" class="panel">
+    <div id="mission-label">FREE ROAM</div>
+    <div id="objective">Press ENTER to start the first job</div>
+    <div id="objective-sub"></div>
+  </div>
+  <div id="prompt"></div>
+  <div id="toast"></div>
+</div>
+
+<div id="menu" class="screen">
+  <h1>PORT MERCER</h1>
+  <h2>LEON BAY &nbsp;•&nbsp; AN OPEN-WORLD CRIME STORY</h2>
+  <p id="story"></p>
+  <div class="controls">
+    <b>WASD / Arrows</b> — move / drive &nbsp;•&nbsp; <b>Mouse</b> — aim &nbsp;•&nbsp; <b>Click</b> — shoot &nbsp;•&nbsp; <b>F</b> — punch<br>
+    <b>E</b> — jack / exit car &nbsp;•&nbsp; <b>Space</b> — brake &nbsp;•&nbsp; <b>R</b> — reload &nbsp;•&nbsp; <b>Enter</b> — start job &nbsp;•&nbsp; <b>Esc</b> — pause &nbsp;•&nbsp; <b>M</b> — mute
+  </div>
+  <div>
+    <button id="btn-start">START GAME</button>
+    <button id="btn-load" class="ghost">CONTINUE (LOAD SAVE)</button>
+  </div>
+  <div class="small">Original game — own city, characters, story, art and sound. No network needed. Progress saves to this browser.</div>
+</div>
+
+<div id="pause" class="screen">
+  <h1>PAUSED</h1>
+  <p>Port Mercer waits for no one. Well — right now it does.</p>
+  <div>
+    <button id="btn-resume">RESUME</button>
+    <button id="btn-save" class="ghost">SAVE GAME</button>
+    <button id="btn-quit" class="ghost">QUIT TO MENU</button>
+  </div>
+</div>
+
+<div id="gameover" class="screen">
+  <h1>BUSTED / FLATLINED</h1>
+  <p>Jules Rook is out of the game. The Broker keeps the ledger open, though.</p>
+  <p><span id="go-cash">$0</span> &nbsp;•&nbsp; <span id="go-missions">0 / 3 jobs done</span></p>
+  <div><button id="btn-retry">TRY AGAIN</button></div>
+</div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
