@@ -1,0 +1,1 @@
+class OESTextureFloatLinear{}function getOESTextureFloatLinear(e){let t=null;const r=e.getSupportedExtensions();return r&&r.indexOf("OES_texture_float_linear")>=0&&(t=new OESTextureFloatLinear),t}module.exports={getOESTextureFloatLinear:getOESTextureFloatLinear,OESTextureFloatLinear:OESTextureFloatLinear};

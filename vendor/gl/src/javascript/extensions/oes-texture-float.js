@@ -1,0 +1,1 @@
+class OESTextureFloat{}function getOESTextureFloat(e){let t=null;const o=e.getSupportedExtensions();return o&&o.indexOf("OES_texture_float")>=0&&(t=new OESTextureFloat),t}module.exports={getOESTextureFloat:getOESTextureFloat,OESTextureFloat:OESTextureFloat};

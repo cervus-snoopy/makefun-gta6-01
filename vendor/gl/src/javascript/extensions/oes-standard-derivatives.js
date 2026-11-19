@@ -1,0 +1,1 @@
+class OESStandardDerivatives{constructor(){this.FRAGMENT_SHADER_DERIVATIVE_HINT_OES=35723}}function getOESStandardDerivatives(t){let e=null;const a=t.getSupportedExtensions();return a&&a.indexOf("OES_standard_derivatives")>=0&&(e=new OESStandardDerivatives),e}module.exports={getOESStandardDerivatives:getOESStandardDerivatives,OESStandardDerivatives:OESStandardDerivatives};

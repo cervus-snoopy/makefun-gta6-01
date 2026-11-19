@@ -1,0 +1,1 @@
+class EXTShaderTextureLod{}function getEXTShaderTextureLod(e){let r=null;const t=e.getSupportedExtensions();return t&&t.indexOf("EXT_shader_texture_lod")>=0&&(r=new EXTShaderTextureLod),r}module.exports={getEXTShaderTextureLod:getEXTShaderTextureLod,EXTShaderTextureLod:EXTShaderTextureLod};

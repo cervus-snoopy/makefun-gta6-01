@@ -1,0 +1,1 @@
+class OESElementIndexUint{}function getOESElementIndexUint(e){let n=null;const t=e.getSupportedExtensions();return t&&t.indexOf("OES_element_index_uint")>=0&&(n=new OESElementIndexUint),n}module.exports={getOESElementIndexUint:getOESElementIndexUint,OESElementIndexUint:OESElementIndexUint};

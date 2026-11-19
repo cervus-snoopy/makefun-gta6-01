@@ -1,0 +1,1 @@
+class STACKGLDestroyContext{constructor(t){this.destroy=t.destroy.bind(t)}}function getSTACKGLDestroyContext(t){return new STACKGLDestroyContext(t)}module.exports={getSTACKGLDestroyContext:getSTACKGLDestroyContext,STACKGLDestroyContext:STACKGLDestroyContext};

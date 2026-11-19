@@ -1,0 +1,1 @@
+class STACKGLResizeDrawingBuffer{constructor(e){this.resize=e.resize.bind(e)}}function getSTACKGLResizeDrawingBuffer(e){return new STACKGLResizeDrawingBuffer(e)}module.exports={getSTACKGLResizeDrawingBuffer:getSTACKGLResizeDrawingBuffer,STACKGLResizeDrawingBuffer:STACKGLResizeDrawingBuffer};

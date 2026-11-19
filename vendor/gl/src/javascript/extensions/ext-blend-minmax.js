@@ -1,0 +1,1 @@
+class EXTBlendMinMax{constructor(){this.MIN_EXT=32775,this.MAX_EXT=32776}}function getEXTBlendMinMax(n){let e=null;const M=n.getSupportedExtensions();return M&&M.indexOf("EXT_blend_minmax")>=0&&(e=new EXTBlendMinMax),e}module.exports={getEXTBlendMinMax:getEXTBlendMinMax,EXTBlendMinMax:EXTBlendMinMax};
