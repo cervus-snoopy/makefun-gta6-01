@@ -1,109 +1,342 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PORT MERCER — Leon Bay | Open-World Crime Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PORT MERCER — Leon Bay</title>
+<meta name="description" content="PORT MERCER — Leon Bay: a 3D open-world crime story. Seven jobs, one ledger, and a city that owes Leon Cross nothing.">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 100%; height: 100%; overflow: hidden; background: #0b0e13; font-family: 'Segoe UI', Arial, sans-serif; }
-  #game { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
-  #hud { position: fixed; inset: 0; pointer-events: none; color: #fff; z-index: 5; }
-  .panel { background: rgba(8, 12, 20, 0.72); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 8px 12px; }
-  #vitals { position: absolute; top: 12px; left: 12px; width: 240px; }
-  .bar-row { display: flex; align-items: center; gap: 8px; margin: 3px 0; font-size: 13px; font-weight: 700; }
-  .bar-label { width: 46px; letter-spacing: 1px; }
-  .bar { flex: 1; height: 12px; background: rgba(255,255,255,0.15); border-radius: 6px; overflow: hidden; }
-  .bar > div { height: 100%; transition: width 0.15s; }
-  #hp-bar { background: #2ecc71; }
-  #armor-bar { background: #3498db; }
-  .bar-num { width: 34px; text-align: right; }
-  #cash { font-size: 20px; font-weight: 800; color: #2ecc71; margin-top: 4px; }
-  #stars { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); font-size: 30px; letter-spacing: 6px; color: #f1c40f; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
-  #clock { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: 700; background: rgba(8,12,20,0.72); border: 1px solid rgba(255,255,255,0.18); border-radius: 6px; padding: 3px 10px; }
-  #minimap-wrap { position: absolute; top: 12px; right: 12px; }
-  #minimap { width: 180px; height: 180px; display: block; border-radius: 8px; }
-  #weapon-box { position: absolute; bottom: 12px; left: 12px; font-size: 15px; font-weight: 700; }
-  #weapon-box .big { font-size: 20px; }
-  #speed-box { position: absolute; bottom: 12px; right: 12px; font-size: 26px; font-weight: 800; text-align: right; }
-  #objective-box { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 460px; text-align: center; }
-  #mission-label { font-size: 12px; letter-spacing: 2px; color: #f1c40f; font-weight: 800; }
-  #objective { font-size: 16px; font-weight: 700; margin-top: 2px; }
-  #objective-sub { font-size: 12px; opacity: 0.85; margin-top: 2px; }
-  #prompt { position: absolute; top: 58%; left: 50%; transform: translateX(-50%); display: none; background: rgba(8,12,20,0.85); border: 1px solid #f1c40f; color: #f1c40f; font-weight: 700; font-size: 15px; padding: 6px 14px; border-radius: 6px; }
-  #toast { position: absolute; top: 110px; left: 50%; transform: translateX(-50%); display: none; background: rgba(241,196,15,0.92); color: #111; font-weight: 800; font-size: 17px; padding: 8px 18px; border-radius: 6px; }
-  .screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: linear-gradient(160deg, rgba(10,14,24,0.88), rgba(20,8,28,0.82)); color: #fff; z-index: 10; padding: 20px; }
-  .screen h1 { font-size: 64px; letter-spacing: 6px; color: #f1c40f; text-shadow: 0 4px 0 #7a5c00, 0 0 30px rgba(241,196,15,0.5); }
-  .screen h2 { font-size: 20px; letter-spacing: 4px; color: #2ecc71; margin-top: 4px; }
-  .screen p { max-width: 560px; font-size: 16px; line-height: 1.5; margin: 18px 0; opacity: 0.92; }
-  .controls { font-size: 14px; line-height: 1.9; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px 22px; margin-bottom: 20px; }
-  .controls b { color: #f1c40f; }
-  button { pointer-events: auto; cursor: pointer; font-size: 18px; font-weight: 800; letter-spacing: 1px; color: #111; background: #f1c40f; border: none; border-radius: 8px; padding: 12px 34px; margin: 4px; }
-  button:hover { background: #ffe14d; }
-  button.ghost { background: transparent; color: #fff; border: 2px solid #fff; }
-  button.ghost:hover { background: rgba(255,255,255,0.15); }
-  #pause, #gameover { display: none; }
-  #gameover h1 { color: #e74c3c; text-shadow: 0 4px 0 #5a0f0f; }
-  .small { font-size: 13px; opacity: 0.7; margin-top: 14px; }
-  #btn-mute { position: absolute; top: 204px; right: 12px; pointer-events: auto; font-size: 12px; padding: 5px 10px; background: rgba(8,12,20,0.72); color: #fff; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; }
+  :root {
+    --ink: #f4ead8;
+    --ink-dim: #c9bda6;
+    --panel: rgba(12, 10, 18, 0.78);
+    --panel-edge: rgba(244, 234, 216, 0.22);
+    --gold: #f5b942;
+    --green: #58d68d;
+    --red: #ff5a4e;
+    --blue: #57a8ff;
+    --violet: #b678f0;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #0b0812;
+    color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+  #game {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    touch-action: none;
+  }
+  #hud {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    font-size: 14px;
+    line-height: 1.55;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  }
+  .corner {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .corner-tl { top: 14px; left: 14px; width: 340px; }
+  .corner-tr { top: 14px; right: 14px; width: 300px; align-items: flex-end; text-align: right; }
+  .corner-bl { bottom: 14px; left: 14px; width: 320px; }
+  .corner-br { bottom: 14px; right: 14px; width: 300px; align-items: flex-end; text-align: right; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-radius: 10px;
+    padding: 14px 16px;
+    line-height: 1.6;
+    backdrop-filter: blur(2px);
+  }
+  .panel p { margin: 4px 0; }
+  .mission-head {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    margin: 0 0 6px 0;
+  }
+  .timer-line {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--red);
+    margin: 2px 0;
+  }
+  .stage-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 4px 0;
+  }
+  .stage-row span { white-space: nowrap; font-size: 13px; letter-spacing: 0.05em; }
+  .track {
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.16);
+    overflow: hidden;
+  }
+  .track > div { height: 100%; width: 0%; background: var(--gold); border-radius: 4px; }
+  .objective-line { font-weight: 600; margin: 6px 0 2px 0; }
+  .hint-line { color: var(--ink-dim); font-style: italic; margin: 2px 0; }
+  .next-line { color: var(--blue); margin: 6px 0 0 0; }
+  .resp-head {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--red);
+    margin: 0 0 6px 0;
+  }
+  .resp-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 3px 0;
+    font-size: 13px;
+  }
+  .resp-row .ramming { color: var(--red); font-weight: 700; }
+  .clock-line { font-size: 15px; font-weight: 700; letter-spacing: 0.08em; }
+  .cash-line { font-size: 30px; font-weight: 800; color: var(--green); line-height: 1.15; }
+  .stars-line { font-size: 24px; letter-spacing: 0.12em; color: var(--gold); line-height: 1.2; }
+  .stars-line .hollow, .stars-line .empty { color: rgba(244, 234, 216, 0.35); }
+  .esc-line { font-size: 13px; color: var(--ink-dim); }
+  .sight-tag {
+    display: none;
+    background: var(--red);
+    color: #fff;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    padding: 3px 9px;
+    border-radius: 4px;
+  }
+  .debt-line { color: var(--red); font-weight: 700; }
+  .slot-row {
+    font-size: 13px;
+    padding: 3px 0;
+    color: var(--ink-dim);
+  }
+  .slot-row.selected { color: var(--ink); font-weight: 700; }
+  .slot-row.locked { opacity: 0.45; }
+  #minimap {
+    width: 168px;
+    height: 168px;
+    border-radius: 50%;
+    border: 2px solid var(--panel-edge);
+    background: rgba(8, 10, 16, 0.85);
+    display: block;
+  }
+  .district-line { font-weight: 700; letter-spacing: 0.06em; margin: 6px 0 0 0; }
+  .bar-row { display: flex; align-items: center; gap: 8px; margin: 5px 0; }
+  .bar-row .bar-label { width: 52px; font-size: 12px; letter-spacing: 0.05em; }
+  .bar-row .track { flex: 1; }
+  .bar-row .bar-num { width: 30px; text-align: right; font-size: 13px; }
+  #hp-bar { background: var(--green); }
+  #armor-bar { background: var(--blue); }
+  #rep-bar { background: var(--violet); }
+  .rep-line { font-size: 13px; color: var(--ink-dim); }
+  .place-line { font-size: 12px; color: var(--ink-dim); margin: 2px 0; }
+  .dialogue-centre {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    width: min(620px, 92vw);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  #dialogue-box {
+    display: none;
+    width: 100%;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-radius: 10px;
+    padding: 12px 16px;
+    line-height: 1.55;
+  }
+  #portrait {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 17px;
+  }
+  #dialogue-name { font-weight: 800; letter-spacing: 0.06em; color: var(--gold); }
+  #dialogue-line { margin: 3px 0 0 0; }
+  #prompt {
+    display: none;
+    background: var(--gold);
+    color: #171208;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 6px;
+    text-shadow: none;
+  }
+  .radio-line { font-weight: 700; }
+  .song-line { color: var(--ink-dim); font-size: 13px; }
+  .car-line { font-size: 16px; font-weight: 700; letter-spacing: 0.05em; }
+  .speed-line { font-size: 34px; font-weight: 800; line-height: 1.1; }
+  .gear-line { font-size: 13px; color: var(--ink-dim); }
+  .screen-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: rgba(7, 5, 12, 0.82);
+    text-align: center;
+    padding: 24px;
+    z-index: 10;
+  }
+  .screen-overlay h1 {
+    margin: 0;
+    font-size: 42px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+  }
+  .screen-overlay h2 { margin: 0; font-size: 26px; letter-spacing: 0.08em; }
+  .screen-overlay p { margin: 0; max-width: 560px; line-height: 1.6; color: var(--ink-dim); }
+  .screen-overlay button {
+    pointer-events: auto;
+    font: inherit;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 11px 26px;
+    border-radius: 8px;
+    border: 1px solid var(--gold);
+    background: var(--gold);
+    color: #171208;
+    cursor: pointer;
+  }
+  .screen-overlay button.ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--panel-edge);
+  }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .tiny-note { font-size: 12px; }
 </style>
 </head>
 <body>
-<canvas id="game"></canvas>
+<canvas id="game" aria-label="PORT MERCER — Leon Bay: drive, run jobs for the Broker, and steal the ledger back"></canvas>
 
 <div id="hud">
-  <div id="vitals" class="panel">
-    <div class="bar-row"><span class="bar-label">HEALTH</span><div class="bar"><div id="hp-bar" style="width:100%"></div></div><span class="bar-num" id="hp-num">100</span></div>
-    <div class="bar-row"><span class="bar-label">ARMOUR</span><div class="bar"><div id="armor-bar" style="width:50%"></div></div><span class="bar-num" id="armor-num">50</span></div>
-    <div id="cash">$250</div>
+  <div class="corner corner-tl">
+    <section class="panel" aria-label="Current mission">
+      <p class="mission-head" id="mission-title">FREE ROAM</p>
+      <p class="timer-line" id="mission-timer" style="display:none"></p>
+      <div class="stage-row"><span id="stage-label">STAGE 0/0</span><div class="track" id="stage-bar"><div></div></div></div>
+      <p class="objective-line" id="objective"></p>
+      <p class="hint-line" id="hint"></p>
+      <p class="next-line" id="next-line"></p>
+    </section>
+    <section class="panel" aria-label="Police response">
+      <p class="resp-head" id="response-header"></p>
+      <div id="response-list"></div>
+    </section>
   </div>
-  <div id="stars">☆☆☆☆☆</div>
-  <div id="clock">DAY 07:00</div>
-  <div id="minimap-wrap"><canvas id="minimap" width="180" height="180"></canvas></div>
-  <button id="btn-mute">M — MUTE</button>
-  <div id="weapon-box" class="panel"><span class="big" id="weapon">PISTOL</span> &nbsp; <span id="ammo">24 / 48</span></div>
-  <div id="speed-box" class="panel"><span id="speed">—</span></div>
-  <div id="objective-box" class="panel">
-    <div id="mission-label">FREE ROAM</div>
-    <div id="objective">Press ENTER to start the first job</div>
-    <div id="objective-sub"></div>
+
+  <div class="corner corner-tr">
+    <div class="clock-line" id="day-time"></div>
+    <div class="cash-line" id="cash-big"></div>
+    <div class="stars-line" id="stars-row"></div>
+    <div class="esc-line" id="escalation"></div>
+    <span class="sight-tag" id="in-sight">IN SIGHT</span>
+    <div class="debt-line" id="debt-line" style="display:none"></div>
+    <div id="weapon-slots"></div>
   </div>
-  <div id="prompt"></div>
-  <div id="toast"></div>
+
+  <div class="corner corner-bl">
+    <canvas id="minimap" width="168" height="168" aria-label="Minimap of Leon Bay"></canvas>
+    <p class="district-line" id="district"></p>
+    <div class="bar-row"><span class="bar-label">HEALTH</span><div class="track"><div id="hp-bar"></div></div><span class="bar-num" id="hp-num"></span></div>
+    <div class="bar-row"><span class="bar-label">ARMOUR</span><div class="track"><div id="armor-bar"></div></div><span class="bar-num" id="armor-num"></span></div>
+    <div class="bar-row"><span class="bar-label" id="rep-label">REP 1</span><div class="track"><div id="rep-bar"></div></div><span class="bar-num" id="rep-title"></span></div>
+    <p class="place-line" id="safehouse-line"></p>
+    <p class="place-line" id="shop-line"></p>
+  </div>
+
+  <div class="corner corner-br">
+    <div class="radio-line" id="radio-station"></div>
+    <div class="song-line" id="radio-song"></div>
+    <div class="car-line" id="car-name">ON FOOT</div>
+    <div class="stage-row" style="width:100%"><div class="track" id="condition-bar"><div></div></div><span id="condition-num"></span></div>
+    <div class="speed-line" id="speed-big">0 KM/H</div>
+    <div class="gear-line" id="gear"></div>
+  </div>
+
+  <div class="dialogue-centre">
+    <div id="dialogue-box">
+      <div id="portrait" aria-hidden="true"></div>
+      <div><div id="dialogue-name"></div><p id="dialogue-line"></p></div>
+    </div>
+    <div id="prompt"></div>
+  </div>
 </div>
 
-<div id="menu" class="screen">
+<div class="screen-overlay" id="menu">
   <h1>PORT MERCER</h1>
-  <h2>LEON BAY &nbsp;•&nbsp; AN OPEN-WORLD CRIME STORY</h2>
-  <p id="story"></p>
-  <div class="controls">
-    <b>WASD / Arrows</b> — move / drive &nbsp;•&nbsp; <b>Mouse</b> — aim &nbsp;•&nbsp; <b>Click</b> — shoot &nbsp;•&nbsp; <b>F</b> — punch<br>
-    <b>E</b> — jack / exit car &nbsp;•&nbsp; <b>Space</b> — brake &nbsp;•&nbsp; <b>R</b> — reload &nbsp;•&nbsp; <b>Enter</b> — start job &nbsp;•&nbsp; <b>Esc</b> — pause &nbsp;•&nbsp; <b>M</b> — mute
-  </div>
-  <div>
-    <button id="btn-start">START GAME</button>
-    <button id="btn-load" class="ghost">CONTINUE (LOAD SAVE)</button>
-  </div>
-  <div class="small">Original game — own city, characters, story, art and sound. No network needed. Progress saves to this browser.</div>
-</div>
-
-<div id="pause" class="screen">
-  <h1>PAUSED</h1>
-  <p>Port Mercer waits for no one. Well — right now it does.</p>
-  <div>
-    <button id="btn-resume">RESUME</button>
-    <button id="btn-save" class="ghost">SAVE GAME</button>
-    <button id="btn-quit" class="ghost">QUIT TO MENU</button>
+  <h2>LEON BAY</h2>
+  <p>Leon Cross owes Marlon “The Broker” Vane $2,500. Seven jobs to clear it — but the man who owns the debt is selling Leon to the police, one job at a time. The last job isn’t a robbery. It’s stealing the book with every name in it.</p>
+  <p class="tiny-note">WASD drive &nbsp;·&nbsp; E jack a car / talk &nbsp;·&nbsp; SPACE handbrake &nbsp;·&nbsp; F punch &nbsp;·&nbsp; M radio &nbsp;·&nbsp; P photo mode &nbsp;·&nbsp; ESC pause</p>
+  <div class="btn-row">
+    <button type="button" id="btn-start">START THE FIRST JOB</button>
+    <button type="button" class="ghost" id="btn-load">CONTINUE SAVED GAME</button>
+    <button type="button" class="ghost" id="btn-mute">SOUND: ON</button>
   </div>
 </div>
 
-<div id="gameover" class="screen">
-  <h1>BUSTED / FLATLINED</h1>
-  <p>Jules Rook is out of the game. The Broker keeps the ledger open, though.</p>
-  <p><span id="go-cash">$0</span> &nbsp;•&nbsp; <span id="go-missions">0 / 3 jobs done</span></p>
-  <div><button id="btn-retry">TRY AGAIN</button></div>
+<div class="screen-overlay" id="pause" style="display:none">
+  <h2>PAUSED</h2>
+  <p>Leon Bay waits for no one — except right now.</p>
+  <div class="btn-row">
+    <button type="button" id="btn-resume">RESUME</button>
+    <button type="button" class="ghost" id="btn-save">SAVE GAME</button>
+    <button type="button" class="ghost" id="btn-quit">QUIT TO MENU</button>
+  </div>
 </div>
 
-<script type="module" src="./src/main.js"></script>
+<div class="screen-overlay" id="gameover" style="display:none">
+  <h2>BUSTED / WASTED</h2>
+  <p id="go-cash"></p>
+  <p id="go-missions"></p>
+  <div class="btn-row">
+    <button type="button" id="btn-retry">TRY THE JOB AGAIN</button>
+  </div>
+</div>
+
+<div class="screen-overlay" id="ending" style="display:none">
+  <h2>THE MERCER SCORE — DONE</h2>
+  <p>The ledger is yours. Every name the Broker ever sold — including Leon’s. What is the truth worth?</p>
+  <div class="btn-row">
+    <button type="button" id="btn-broadcast">BROADCAST THE NAMES</button>
+    <button type="button" class="ghost" id="btn-burn">BURN THE BOOK</button>
+  </div>
+</div>
+
+<script type="module" src="./src/three-browser.js"></script>
 </body>
 </html>
