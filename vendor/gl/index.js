@@ -1,0 +1,1 @@
+"undefined"!=typeof WebGLRenderingContext?module.exports=require("./src/javascript/browser-index"):module.exports=require("./src/javascript/node-index"),module.exports.WebGLRenderingContext=require("./src/javascript/webgl-rendering-context").WebGLRenderingContext;
