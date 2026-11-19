@@ -1,0 +1,1 @@
+class WebGLDrawingBufferWrapper{constructor(r,e,f){this._framebuffer=r,this._color=e,this._depthStencil=f}}module.exports={WebGLDrawingBufferWrapper:WebGLDrawingBufferWrapper};

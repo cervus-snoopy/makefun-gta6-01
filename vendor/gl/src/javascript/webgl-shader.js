@@ -1,0 +1,1 @@
+const{gl:gl}=require("./native-gl"),{Linkable:Linkable}=require("./linkable");class WebGLShader extends Linkable{constructor(e,t,s){super(e),this._type=s,this._ctx=t,this._source="",this._compileStatus=!1,this._compileInfo=""}_performDelete(){const e=this._ctx;delete e._shaders[0|this._],gl.deleteShader.call(e,0|this._)}}module.exports={WebGLShader:WebGLShader};

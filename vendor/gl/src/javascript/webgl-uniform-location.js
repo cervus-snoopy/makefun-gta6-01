@@ -1,0 +1,1 @@
+class WebGLUniformLocation{constructor(o,i,t){this._=o,this._program=i,this._linkCount=i._linkCount,this._activeInfo=t,this._array=null}}module.exports={WebGLUniformLocation:WebGLUniformLocation};

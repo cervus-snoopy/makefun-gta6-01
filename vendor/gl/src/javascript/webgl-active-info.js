@@ -1,0 +1,1 @@
+class WebGLActiveInfo{constructor(e){this.size=e.size,this.type=e.type,this.name=e.name}}module.exports={WebGLActiveInfo:WebGLActiveInfo};

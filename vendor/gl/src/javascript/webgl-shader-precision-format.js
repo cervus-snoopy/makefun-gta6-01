@@ -1,0 +1,1 @@
+class WebGLShaderPrecisionFormat{constructor(r){this.rangeMin=r.rangeMin,this.rangeMax=r.rangeMax,this.precision=r.precision}}module.exports={WebGLShaderPrecisionFormat:WebGLShaderPrecisionFormat};

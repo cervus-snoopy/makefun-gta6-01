@@ -1,0 +1,1 @@
+class WebGLTextureUnit{constructor(t,e){this._ctx=t,this._idx=e,this._mode=0,this._bind2D=null,this._bindCube=null}}module.exports={WebGLTextureUnit:WebGLTextureUnit};

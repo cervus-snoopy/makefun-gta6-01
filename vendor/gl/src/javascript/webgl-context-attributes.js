@@ -1,0 +1,1 @@
+class WebGLContextAttributes{constructor(t,e,i,r,s,a,o,h){this.alpha=t,this.depth=e,this.stencil=i,this.antialias=r,this.premultipliedAlpha=s,this.preserveDrawingBuffer=a,this.preferLowPowerToHighPerformance=o,this.failIfMajorPerformanceCaveat=h}}module.exports={WebGLContextAttributes:WebGLContextAttributes};

@@ -1,0 +1,1 @@
+const{Linkable:Linkable}=require("./linkable"),{gl:gl}=require("./native-gl");class WebGLBuffer extends Linkable{constructor(e,t){super(e),this._ctx=t,this._size=0,this._elements=new Uint8Array(0)}_performDelete(){const e=this._ctx;delete e._buffers[0|this._],gl.deleteBuffer.call(e,0|this._)}}module.exports={WebGLBuffer:WebGLBuffer};

@@ -1,0 +1,1 @@
+const NativeWebGL=require("bindings")("webgl"),{WebGLRenderingContext:NativeWebGLRenderingContext}=NativeWebGL;process.on("exit",NativeWebGL.cleanup);const gl=NativeWebGLRenderingContext.prototype;delete gl["1.0.0"],delete NativeWebGLRenderingContext["1.0.0"],module.exports={gl:gl,NativeWebGL:NativeWebGL,NativeWebGLRenderingContext:NativeWebGLRenderingContext};

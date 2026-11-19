@@ -1,0 +1,1 @@
+const{Linkable:Linkable}=require("./linkable"),{gl:gl}=require("./native-gl");class WebGLRenderbuffer extends Linkable{constructor(e,t){super(e),this._ctx=t,this._binding=0,this._width=0,this._height=0,this._format=0}_performDelete(){const e=this._ctx;delete e._renderbuffers[0|this._],gl.deleteRenderbuffer.call(e,0|this._)}}module.exports={WebGLRenderbuffer:WebGLRenderbuffer};
