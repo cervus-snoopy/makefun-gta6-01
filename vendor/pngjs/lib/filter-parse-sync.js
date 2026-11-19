@@ -1,0 +1,1 @@
+"use strict";let SyncReader=require("./sync-reader"),Filter=require("./filter-parse");exports.process=function(e,r){let t=[],n=new SyncReader(e);return new Filter(r,{read:n.read.bind(n),write:function(e){t.push(e)},complete:function(){}}).start(),n.process(),Buffer.concat(t)};

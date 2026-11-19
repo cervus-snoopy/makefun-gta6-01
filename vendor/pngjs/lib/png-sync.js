@@ -1,0 +1,1 @@
+"use strict";let parse=require("./parser-sync"),pack=require("./packer-sync");exports.read=function(r,e){return parse(r,e||{})},exports.write=function(r,e){return pack(r,e)};

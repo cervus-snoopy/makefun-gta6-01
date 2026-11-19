@@ -1,0 +1,1 @@
+"use strict";module.exports=function(t,a,s){let e=t+a-s,r=Math.abs(e-t),u=Math.abs(e-a),b=Math.abs(e-s);return r<=u&&r<=b?t:u<=b?a:s};
